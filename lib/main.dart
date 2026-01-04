@@ -1,3 +1,5 @@
+import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
+import 'package:autoroutine/features/auth/presentation/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,9 +24,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthState()),
+        BlocProvider(create: (_) => AuthCubit()),
       ],
-      child:const MyApp(),
+      child: const MaterialApp(
+        home: AuthGate()
+      ),
     );
   }
 }
