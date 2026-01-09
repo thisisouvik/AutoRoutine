@@ -3,17 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial()) {
+  AuthCubit() : super(AuthLoading()) {
     _checkSession();
   }
 
   final SupabaseClient _client = Supabase.instance.client;
 
-  void _checkSession() {
-    final session = _client.auth.currentSession;
-    if (session != null) {
-      emit(AuthAuthenticated((session.user.id)));
-    } else {
+  Future<void> _checkSession() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      final session = _client.auth.currentSession;
+      if (session != null) {
+        emit(AuthAuthenticated(session.user.id));
+      } else {
+        emit(AuthUnauthenticated());
+      }
+    } catch (e) {
       emit(AuthUnauthenticated());
     }
   }
