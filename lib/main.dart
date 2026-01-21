@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:autoroutine/core/presentation/splash_screen.dart';
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/presentation/auth_gate.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +14,7 @@ Future<void> main() async {
 try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    print("Warning: .env file not found: $e");
+    log("Warning: .env file not found: $e" as num);
   }
 
   await Supabase.initialize(
@@ -30,8 +33,13 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => AuthCubit()),
       ],
-      child: const MaterialApp(
-        home: AuthGate()
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/auth' : (context) => AuthGate()
+        },
       ),
     );
   }
