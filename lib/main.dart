@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'dart:developer' as dev;
 import 'package:autoroutine/core/presentation/splash_screen.dart';
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/presentation/auth_gate.dart';
@@ -11,16 +10,25 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-try {
+  try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    log("Warning: .env file not found: $e" as num);
+    dev.log('Warning: .env file not found: $e');
   }
 
-  await Supabase.initialize(
-    url: dotenv.env["SUPABASE_URL"] ?? "",
-    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? "",
-  );
+  final supabaseUrl = dotenv.env['SUPABASE_URL'];
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+
+  if (supabaseUrl == null ||
+      supabaseUrl.isEmpty ||
+      supabaseAnonKey == null ||
+      supabaseAnonKey.isEmpty) {
+    throw Exception(
+      'Supabase credentials are missing. Check .env for SUPABASE_URL and SUPABASE_ANON_KEY',
+    );
+  }
+
+  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
   runApp(const MyApp());
 }
 
@@ -30,15 +38,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AuthCubit()),
-      ],
+      providers: [BlocProvider(create: (_) => AuthCubit())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
-          '/auth' : (context) => AuthGate()
+          '/auth': (context) => AuthGate(),
         },
       ),
     );
