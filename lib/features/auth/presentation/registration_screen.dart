@@ -29,20 +29,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final password = _passwordcontroller.text.trim();
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('All fields are required ')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All fields are required')));
+      return;
+    }
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
     }
     context.read<AuthCubit>().register(email, password, name);
-
-    if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password must be greater than 6 characters'),
-        ),
-      );
-    }
-    return;
   }
 
   @override
