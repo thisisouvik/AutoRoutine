@@ -1,5 +1,6 @@
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/cubit/auth_state.dart';
+import 'package:autoroutine/features/auth/presentation/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -104,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   Center(
                     child: TextButton(onPressed: () {
-                      //Registration Screen
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const RegistrationScreen()));
                     }, child: const Text('Create New Account')),
                   )
                 ],

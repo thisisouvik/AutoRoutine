@@ -17,7 +17,21 @@ class AuthGate extends StatelessWidget {
           );
         }
         if (state is AuthAuthenticated) {
-          return Scaffold(body: Center(child: Text('Home Coming')));
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Home'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    context.read<AuthCubit>().logout();
+                  },
+                  tooltip: 'Logout',
+                )
+              ],
+            ),
+            body: const Center(child: Text('Welcome! Home Coming')),
+          );
         }
         return const LoginScreen();
       },
