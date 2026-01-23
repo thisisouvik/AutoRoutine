@@ -43,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: EdgeInsetsGeometry.all(24),
           child: BlocConsumer<AuthCubit, AuthState>(
             listener: (context, state) {
+              
               if (state is AuthError) {
                 ScaffoldMessenger.of(
                   context,

@@ -65,10 +65,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
             }
+            if (state is AuthAuthenticated) {
+              Navigator.of(context).pop();
+            }
           },
 
           builder: (context, state) {
             final isLoading = state is AuthLoading;
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
