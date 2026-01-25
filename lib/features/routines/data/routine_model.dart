@@ -1,15 +1,15 @@
 class Routine {
   final String id;
   final int hour;
-  final String minutes;
-  final String seconds;
+  final int minute;
+  final String message;
   final bool isActive;
 
   Routine({
     required this.id,
     required this.hour,
-    required this.minutes,
-    required this.seconds,
+    required this.minute,
+    required this.message,
     required this.isActive,
   });
 
@@ -17,8 +17,8 @@ class Routine {
     return Routine(
       id: map['id'],
       hour: map['hour'],
-      minutes: map['minutes'],
-      seconds: map['seconds'],
+      minute: map['minute'],
+      message: map['message'],
       isActive: map['isActive'],
     );
   }
