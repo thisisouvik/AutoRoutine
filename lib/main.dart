@@ -2,6 +2,8 @@ import 'dart:developer' as dev;
 import 'package:autoroutine/core/presentation/splash_screen.dart';
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/presentation/auth_gate.dart';
+import 'package:autoroutine/features/routines/cubit/routine_cubit.dart';
+import 'package:autoroutine/features/routines/data/routine_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -38,7 +40,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => AuthCubit())],
+      providers: [
+        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(create: (_) => RoutineCubit(RoutineRepository())),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
