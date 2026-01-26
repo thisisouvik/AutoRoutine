@@ -1,6 +1,7 @@
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/cubit/auth_state.dart';
 import 'package:autoroutine/features/auth/presentation/login_screen.dart';
+import 'package:autoroutine/features/home/presentation/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,21 +18,7 @@ class AuthGate extends StatelessWidget {
           );
         }
         if (state is AuthAuthenticated) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Home'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    context.read<AuthCubit>().logout();
-                  },
-                  tooltip: 'Logout',
-                )
-              ],
-            ),
-            body: const Center(child: Text('Welcome! Home Coming')),
-          );
+          return const HomeScreen();
         }
         return const LoginScreen();
       },
