@@ -56,8 +56,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       appBar: AppBar(title: const Text('Add Routine')),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             const Text(
               'Routine Message',
@@ -71,12 +70,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 24),
-
             const Text('Time', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-
             Row(
               children: [
                 Text(
@@ -90,9 +86,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 ),
               ],
             ),
-
-            const Spacer(),
-
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               height: 48,

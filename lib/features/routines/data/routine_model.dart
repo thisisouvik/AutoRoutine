@@ -4,6 +4,7 @@ class Routine {
   final int minute;
   final String message;
   final bool isActive;
+  final String scheduleType;
 
   Routine({
     required this.id,
@@ -11,6 +12,7 @@ class Routine {
     required this.minute,
     required this.message,
     required this.isActive,
+    this.scheduleType = 'General',
   });
 
   factory Routine.fromMap(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class Routine {
       minute: (map['minute'] ?? map['min']) as int,
       message: map['message'] as String,
       isActive: (map['is_active'] ?? map['isActive'] ?? false) as bool,
+      scheduleType: map['schedule_type'] as String? ?? 'General',
     );
   }
 }
