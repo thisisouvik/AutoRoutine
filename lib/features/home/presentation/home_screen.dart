@@ -58,6 +58,23 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
+          if (state is RoutineError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.message),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () =>
+                        context.read<RoutineCubit>().loadRoutines(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           return const Center(child: Text('Something went wrong'));
         },
       ),
@@ -65,9 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const AddRoutineScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const AddRoutineScreen()),
           );
         },
         child: const Icon(Icons.add),

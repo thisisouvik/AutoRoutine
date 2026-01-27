@@ -20,11 +20,14 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   Future<void> _pickTime() async {
-    final picked = showTimePicker(context: context, initialTime: _selectedTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
 
     if (picked != null) {
       setState(() {
-        _selectedTime = picked as TimeOfDay;
+        _selectedTime = picked;
       });
     }
   }
@@ -49,9 +52,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
-        title: const Text('Add Routine'),
-      ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Add Routine')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -72,10 +74,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
             const SizedBox(height: 24),
 
-            const Text(
-              'Time',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            const Text('Time', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
 
             Row(

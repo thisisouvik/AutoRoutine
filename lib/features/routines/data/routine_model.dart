@@ -15,11 +15,11 @@ class Routine {
 
   factory Routine.fromMap(Map<String, dynamic> map) {
     return Routine(
-      id: map['id'],
-      hour: map['hour'],
-      minute: map['minute'],
-      message: map['message'],
-      isActive: map['isActive'],
+      id: map['id'] as String,
+      hour: (map['hour'] ?? map['hr']) as int,
+      minute: (map['minute'] ?? map['min']) as int,
+      message: map['message'] as String,
+      isActive: (map['is_active'] ?? map['isActive'] ?? false) as bool,
     );
   }
 }
