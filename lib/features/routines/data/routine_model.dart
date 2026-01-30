@@ -8,6 +8,7 @@ class Routine {
   final String scheduleFrequency;
   final String? templateName;
   final bool isCompleted;
+  final String taskType; // 'one_time', 'routine', 'template', 'personal'
 
   Routine({
     required this.id,
@@ -19,6 +20,7 @@ class Routine {
     this.scheduleFrequency = 'Every day',
     this.templateName,
     this.isCompleted = false,
+    this.taskType = 'routine',
   });
 
   factory Routine.fromMap(Map<String, dynamic> map) {
@@ -32,6 +34,7 @@ class Routine {
       scheduleFrequency: map['schedule_frequency'] as String? ?? 'Every day',
       templateName: map['template_name'] as String?,
       isCompleted: (map['is_completed'] ?? false) as bool,
+      taskType: map['task_type'] as String? ?? 'routine',
     );
   }
 
@@ -45,6 +48,7 @@ class Routine {
     String? scheduleFrequency,
     String? templateName,
     bool? isCompleted,
+    String? taskType,
   }) {
     return Routine(
       id: id ?? this.id,
@@ -56,6 +60,17 @@ class Routine {
       scheduleFrequency: scheduleFrequency ?? this.scheduleFrequency,
       templateName: templateName ?? this.templateName,
       isCompleted: isCompleted ?? this.isCompleted,
+      taskType: taskType ?? this.taskType,
     );
+  }
+
+  /// Check if task should be displayed today
+  bool shouldDisplayToday() {
+    // One-time tasks show only for today
+    if (taskType == 'one_time') {
+      return true;
+    }
+    // Other tasks always display
+    return true;
   }
 }

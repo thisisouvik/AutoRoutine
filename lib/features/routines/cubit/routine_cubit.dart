@@ -36,6 +36,7 @@ class RoutineCubit extends Cubit<RoutineState> {
     String scheduleType = 'General',
     String scheduleFrequency = 'Every day',
     String? templateName,
+    String taskType = 'routine',
   }) async {
     try {
       await repository.addRoutine(
@@ -45,6 +46,7 @@ class RoutineCubit extends Cubit<RoutineState> {
         scheduleType: scheduleType,
         scheduleFrequency: scheduleFrequency,
         templateName: templateName,
+        taskType: taskType,
       );
       await loadRoutines();
     } catch (e) {

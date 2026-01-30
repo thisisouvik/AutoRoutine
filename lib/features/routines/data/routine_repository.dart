@@ -1,4 +1,5 @@
 import 'package:autoroutine/features/routines/data/routine_model.dart';
+import 'package:autoroutine/features/routines/data/template_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoutineRepository {
@@ -8,15 +9,52 @@ class RoutineRepository {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) throw Exception('User not authenticated');
 
+    // Fetch user's routines
     final response = await _client
         .from('routine')
         .select()
         .eq('user_id', userId)
         .order('created_at', ascending: false);
 
-    return List<Routine>.from(
+    final routines = List<Routine>.from(
       (response as List).map((e) => Routine.fromMap(e as Map<String, dynamic>)),
     );
+
+    // Fetch active templates and their routines
+    final templates = await _client
+        .from('routine_template')
+        .select()
+        .eq('user_id', userId)
+        .eq('is_active', true);
+
+    // Convert template routines to regular routines for display
+    for (var template in templates) {
+      final templateId = template['id'] as String;
+      final templateRoutines = await _client
+          .from('template_routine')
+          .select()
+          .eq('template_id', templateId);
+
+      // Add template routines to the list
+      for (var routine in templateRoutines) {
+        routines.add(
+          Routine(
+            id: '${templateId}_${routine['id']}',
+            hour: routine['hour'] as int,
+            minute: routine['min'] as int,
+            message: routine['message'] as String,
+            isActive: routine['is_active'] as bool? ?? true,
+            scheduleType: template['schedule_type'] as String? ?? 'Template',
+            scheduleFrequency: 'Template',
+            templateName: template['name'] as String?,
+            isCompleted: false,
+            taskType: 'template',
+          ),
+        );
+      }
+    }
+
+    return routines;
   }
 
   Future<List<Routine>> fetchRoutinesByType(String scheduleType) async {
@@ -42,6 +80,7 @@ class RoutineRepository {
     String scheduleType = 'General',
     String scheduleFrequency = 'Every day',
     String? templateName,
+    String taskType = 'routine',
   }) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) throw Exception('User not authenticated');
@@ -55,6 +94,7 @@ class RoutineRepository {
       'schedule_type': scheduleType,
       'schedule_frequency': scheduleFrequency,
       'template_name': templateName,
+      'task_type': taskType,
       'is_completed': false,
     });
   }
