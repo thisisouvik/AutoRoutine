@@ -9,16 +9,14 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Supabase.instance.client.auth.currentUser;
-    final userName = user?.userMetadata?['full_name'] ?? 
-                     user?.email?.split('@')[0] ?? 
-                     'User';
+    final userName =
+        user?.userMetadata?['full_name'] ??
+        user?.email?.split('@')[0] ??
+        'User';
     final userEmail = user?.email ?? 'No email';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Profile'), elevation: 0),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -55,10 +53,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     userEmail,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -73,10 +68,7 @@ class ProfileScreen extends StatelessWidget {
           // Account Settings
           const Text(
             'Account Settings',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Card(
@@ -101,7 +93,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.notifications, color: Colors.orange),
+                  leading: const Icon(
+                    Icons.notifications,
+                    color: Colors.orange,
+                  ),
                   title: const Text('Notifications'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
@@ -173,9 +168,7 @@ class _WeeklyProgressCard extends StatelessWidget {
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -183,23 +176,16 @@ class _WeeklyProgressCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.bar_chart,
-                  color: Colors.green.shade700,
-                  size: 28,
-                ),
+                Icon(Icons.bar_chart, color: Colors.green.shade700, size: 28),
                 const SizedBox(width: 12),
                 const Text(
                   'Weekly Progress',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            
+
             if (!eligibleForReport)
               Container(
                 padding: const EdgeInsets.all(16),
@@ -210,7 +196,11 @@ class _WeeklyProgressCard extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Icon(Icons.lock_outline, size: 48, color: Colors.orange.shade700),
+                    Icon(
+                      Icons.lock_outline,
+                      size: 48,
+                      color: Colors.orange.shade700,
+                    ),
                     const SizedBox(height: 12),
                     const Text(
                       'Keep Going!',
@@ -294,7 +284,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Week days progress
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,10 +322,11 @@ class _WeeklyProgressCard extends StatelessWidget {
                               ),
                             ],
                           );
-                        }).toList(),
+                        })
+                        .toList(),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // View detailed report button
                   SizedBox(
                     width: double.infinity,

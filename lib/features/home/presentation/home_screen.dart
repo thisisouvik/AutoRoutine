@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool showAppBar;
-  
+
   const HomeScreen({super.key, this.showAppBar = true});
 
   @override
@@ -38,16 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.showAppBar
-          ? AppBar(
-              title: const Text('My Routines'),
+          ? AppBar(title: const Text('My Routines'), elevation: 0)
+          : AppBar(
+              title: const Text('AutoRoutine'),
               elevation: 0,
-            )
-          : null,
+              automaticallyImplyLeading: false,
+            ),
       body: Column(
         children: [
           // Search Bar
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               onChanged: (value) {
                 setState(() {

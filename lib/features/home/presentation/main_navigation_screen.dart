@@ -2,7 +2,6 @@ import 'package:autoroutine/features/home/presentation/home_screen.dart';
 import 'package:autoroutine/features/profile/presentation/profile_screen.dart';
 import 'package:autoroutine/features/routines/presentation/add_routine_screen.dart';
 import 'package:autoroutine/features/routines/presentation/ai_routine_generator_screen.dart';
-import 'package:autoroutine/features/routines/presentation/suggest_routine_screen.dart';
 import 'package:autoroutine/features/routines/presentation/template_list_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,23 +13,19 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _currentIndex = 2; // Start with Home (routines list)
+  int _currentIndex = 0; // Start with Home (routines list)
 
   final List<Widget> _screens = [
+    const HomeScreen(showAppBar: false),
     const AIRoutineGeneratorScreen(),
     const TemplateListScreen(),
-    const HomeScreen(showAppBar: false),
-    const SuggestRoutineScreen(),
     const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -48,11 +43,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.auto_awesome, 'AI', 0),
-            _buildNavItem(Icons.calendar_view_week, 'Templates', 1),
+            _buildNavItem(Icons.home, 'Home', 0),
+            _buildNavItem(Icons.auto_awesome, 'AI', 1),
             const SizedBox(width: 48), // Space for FAB
-            _buildNavItem(Icons.lightbulb_outline, 'Suggestions', 3),
-            _buildNavItem(Icons.person, 'Profile', 4),
+            _buildNavItem(Icons.calendar_view_week, 'Templates', 2),
+            _buildNavItem(Icons.person, 'Profile', 3),
           ],
         ),
       ),
@@ -72,11 +67,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.blue : Colors.grey,
-              size: 24,
-            ),
+            Icon(icon, color: isSelected ? Colors.blue : Colors.grey, size: 24),
             const SizedBox(height: 2),
             Text(
               label,

@@ -3,7 +3,11 @@ import 'package:autoroutine/core/presentation/splash_screen.dart';
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/presentation/auth_gate.dart';
 import 'package:autoroutine/features/routines/cubit/routine_cubit.dart';
+import 'package:autoroutine/features/routines/cubit/routine_suggest_cubit.dart';
+import 'package:autoroutine/features/routines/cubit/template_cubit.dart';
+import 'package:autoroutine/features/routines/data/activity_repository.dart';
 import 'package:autoroutine/features/routines/data/routine_repository.dart';
+import 'package:autoroutine/features/routines/data/template_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,6 +47,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => AuthCubit()),
         BlocProvider(create: (_) => RoutineCubit(RoutineRepository())),
+        BlocProvider(create: (_) => TemplateCubit(TemplateRepository())),
+        BlocProvider(create: (_) => RoutineSuggestCubit(ActivityRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
