@@ -15,7 +15,7 @@ extension ScheduleFrequencyX on ScheduleFrequency {
 }
 
 /// Task/Routine type after scheduling
-enum TaskType { one_time, routine, template }
+enum TaskType { one_time, routine, template, personal }
 
 extension TaskTypeX on TaskType {
   String get displayName {
@@ -26,6 +26,8 @@ extension TaskTypeX on TaskType {
         return 'Add to routine';
       case TaskType.template:
         return 'Add to routine template';
+      case TaskType.personal:
+        return 'Personal';
     }
   }
 }
