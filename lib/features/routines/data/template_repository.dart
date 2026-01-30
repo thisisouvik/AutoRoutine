@@ -108,6 +108,16 @@ class TemplateRepository {
     await _client.from('routine_template').delete().eq('id', templateId);
   }
 
+  Future<void> toggleTemplateActivation(
+    String templateId,
+    bool isActive,
+  ) async {
+    await _client
+        .from('routine_template')
+        .update({'is_active': isActive})
+        .eq('id', templateId);
+  }
+
   Future<void> applyTemplate(
     String templateId, {
     String scheduleType = 'General',

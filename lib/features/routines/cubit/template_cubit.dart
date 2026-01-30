@@ -1,4 +1,5 @@
 import 'package:autoroutine/features/routines/cubit/template_state.dart';
+import 'package:autoroutine/features/routines/data/celebrity_routines.dart';
 import 'package:autoroutine/features/routines/data/template_model.dart';
 import 'package:autoroutine/features/routines/data/template_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +13,13 @@ class TemplateCubit extends Cubit<TemplateState> {
     emit(TemplateLoading());
 
     try {
-      final templates = await repository.fetchTemplates();
-      emit(TemplateLoaded(templates));
+      final userTemplates = await repository.fetchTemplates();
+      final celebrityTemplates = CelebrityRoutines.getPredefinedTemplates();
+
+      // Combine both lists - celebrities first, then user templates
+      final allTemplates = [...celebrityTemplates, ...userTemplates];
+
+      emit(TemplateLoaded(allTemplates));
     } catch (e) {
       emit(TemplateError(e.toString()));
     }
@@ -56,6 +62,18 @@ class TemplateCubit extends Cubit<TemplateState> {
   Future<void> deleteTemplate(String templateId) async {
     try {
       await repository.deleteTemplate(templateId);
+      await loadTemplates();
+    } catch (e) {
+      emit(TemplateError(e.toString()));
+    }
+  }
+
+  Future<void> toggleTemplateActivation(
+    String templateId,
+    bool isActive,
+  ) async {
+    try {
+      await repository.toggleTemplateActivation(templateId, isActive);
       await loadTemplates();
     } catch (e) {
       emit(TemplateError(e.toString()));
