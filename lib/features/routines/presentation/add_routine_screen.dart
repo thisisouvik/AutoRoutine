@@ -1,5 +1,10 @@
+import 'dart:developer' as dev;
+
 import 'package:autoroutine/features/routines/cubit/add_routine_cubit.dart';
 import 'package:autoroutine/features/routines/cubit/routine_cubit.dart';
+import 'package:autoroutine/features/routines/cubit/template_cubit.dart';
+import 'package:autoroutine/features/routines/cubit/template_state.dart';
+import 'package:autoroutine/features/routines/data/template_model.dart';
 import 'package:autoroutine/features/routines/domain/add_routine_model.dart';
 import 'package:autoroutine/features/routines/domain/enums.dart';
 import 'package:autoroutine/features/routines/presentation/widgets/add_routine_widgets.dart';
@@ -47,100 +52,144 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     }
   }
 
-  void _saveRoutine(AddRoutineFormData formData) {
-    // TODO: Implement save logic based on taskType and formData
-    // For now, save to basic routine
-    context.read<RoutineCubit>().addRoutine(
-      hour: formData.selectedTime.hour,
-      minute: formData.selectedTime.minute,
-      message: formData.taskName,
-      scheduleType: formData.selectedTemplate.displayName,
-    );
-    Navigator.pop(context);
+  Future<void> _saveRoutine(
+    BuildContext context,
+    AddRoutineFormData formData,
+  ) async {
+    // Save routine with all details
+    try {
+      await context.read<RoutineCubit>().addRoutine(
+        hour: formData.selectedTime.hour,
+        minute: formData.selectedTime.minute,
+        message: formData.taskName,
+        scheduleType: formData.selectedTemplateId ?? 'General',
+        scheduleFrequency: formData.scheduleFrequency.displayName,
+        templateName: formData.selectedTemplateId,
+      );
+
+      dev.log('Routine saved successfully', name: 'AddRoutineScreen');
+
+      // Show success snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Text('Your routine has been saved!'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Reload routines and navigate to home screen
+      await context.read<RoutineCubit>().loadRoutines();
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } catch (e, st) {
+      dev.log(
+        'Failed to save routine: $e',
+        name: 'AddRoutineScreen',
+        stackTrace: st,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Save failed: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AddRoutineCubit(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Add Routine'), elevation: 0),
-        body: Column(
-          children: [
-            // Progress indicator
-            LinearProgressIndicator(
-              value: (_currentStep + 1) / 5,
-              minHeight: 4,
-            ),
-            // Step content
-            Expanded(
-              child: BlocBuilder<AddRoutineCubit, AddRoutineState>(
-                builder: (context, state) {
-                  if (state is! AddRoutineInitial) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() => _currentStep = index);
-                    },
-                    children: [
-                      // Step 1: Task Name
-                      _buildTaskNameStep(context, state.formData),
-                      // Step 2: Schedule Frequency
-                      _buildScheduleFrequencyStep(context, state.formData),
-                      // Step 3: Time & Days
-                      _buildTimeAndDaysStep(context, state.formData),
-                      // Step 4: Task Type
-                      _buildTaskTypeStep(context, state.formData),
-                      // Step 5: Template Selection (if needed)
-                      _buildTemplateStep(context, state.formData),
-                    ],
-                  );
-                },
+    return MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => AddRoutineCubit())],
+      child: Builder(
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: const Text('Add Routine'), elevation: 0),
+          body: Column(
+            children: [
+              // Progress indicator
+              LinearProgressIndicator(
+                value: (_currentStep + 1) / 5,
+                minHeight: 4,
               ),
-            ),
-            // Navigation buttons
-            BlocListener<AddRoutineCubit, AddRoutineState>(
-              listener: (context, state) {
-                if (state is AddRoutineError) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.message)));
-                } else if (state is AddRoutineValid) {
-                  _saveRoutine(state.formData);
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: _currentStep > 0 ? _previousStep : null,
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Back'),
-                    ),
-                    if (_currentStep < 4)
-                      ElevatedButton.icon(
-                        onPressed: _nextStep,
-                        label: const Text('Next'),
-                        icon: const Icon(Icons.arrow_forward),
-                      )
-                    else
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          context.read<AddRoutineCubit>().validateAndProceed();
-                        },
-                        label: const Text('Save Routine'),
-                        icon: const Icon(Icons.check),
-                      ),
-                  ],
+              // Step content
+              Expanded(
+                child: BlocBuilder<AddRoutineCubit, AddRoutineState>(
+                  builder: (context, state) {
+                    if (state is! AddRoutineInitial) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return PageView(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() => _currentStep = index);
+                      },
+                      children: [
+                        // Step 1: Task Name
+                        _buildTaskNameStep(context, state.formData),
+                        // Step 2: Schedule Frequency
+                        _buildScheduleFrequencyStep(context, state.formData),
+                        // Step 3: Time & Days
+                        _buildTimeAndDaysStep(context, state.formData),
+                        // Step 4: Task Type
+                        _buildTaskTypeStep(context, state.formData),
+                        // Step 5: Template Selection (if needed)
+                        _buildTemplateStep(context, state.formData),
+                      ],
+                    );
+                  },
                 ),
               ),
-            ),
-          ],
+              // Navigation buttons
+              BlocListener<AddRoutineCubit, AddRoutineState>(
+                listener: (context, state) {
+                  if (state is AddRoutineError) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(state.message)));
+                  } else if (state is AddRoutineValid) {
+                    _saveRoutine(context, state.formData);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: _currentStep > 0 ? _previousStep : null,
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('Back'),
+                      ),
+                      if (_currentStep < 4)
+                        ElevatedButton.icon(
+                          onPressed: _nextStep,
+                          label: const Text('Next'),
+                          icon: const Icon(Icons.arrow_forward),
+                        )
+                      else
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            context
+                                .read<AddRoutineCubit>()
+                                .validateAndProceed();
+                          },
+                          label: const Text('Save Routine'),
+                          icon: const Icon(Icons.check),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -399,37 +448,81 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          const StepCard(
-            title: 'Step 5 of 5',
-            subtitle: 'Which template?',
-            child: SizedBox.shrink(),
-          ),
-          const SizedBox(height: 16),
-          ...RoutineTemplate.values
-              .where((t) => t != RoutineTemplate.none)
-              .map(
-                (template) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: OptionCard<RoutineTemplate>(
-                    value: template,
-                    groupValue: formData.selectedTemplate,
-                    title: template.displayName,
-                    subtitle: template.description,
-                    onChanged: (t) {
-                      context.read<AddRoutineCubit>().updateTemplate(t);
-                    },
+    // Use BlocBuilder to display user-created templates
+    return BlocBuilder<TemplateCubit, TemplateState>(
+      builder: (context, templateState) {
+        final List<RoutineTemplate> templates = templateState is TemplateLoaded
+            ? templateState.templates
+            : [];
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+              const StepCard(
+                title: 'Step 5 of 5',
+                subtitle: 'Which template?',
+                child: SizedBox.shrink(),
+              ),
+              const SizedBox(height: 16),
+              if (templates.isEmpty)
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.folder_open,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'No templates yet',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Create your first template to organize routines',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/create-template');
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Create Template'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ...templates.map(
+                  (template) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: OptionCard<String>(
+                      value: template.id,
+                      groupValue: formData.selectedTemplateId ?? '',
+                      title: template.name,
+                      subtitle: template.description ?? 'No description',
+                      onChanged: (id) {
+                        context.read<AddRoutineCubit>().updateTemplateId(id);
+                      },
+                    ),
                   ),
                 ),
-              )
-              .toList(),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

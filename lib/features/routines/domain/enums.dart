@@ -30,37 +30,6 @@ extension TaskTypeX on TaskType {
   }
 }
 
-/// Predefined routine templates
-enum RoutineTemplate { school, college, office, none }
-
-extension RoutineTemplateX on RoutineTemplate {
-  String get displayName {
-    switch (this) {
-      case RoutineTemplate.school:
-        return 'School routine';
-      case RoutineTemplate.college:
-        return 'College routine';
-      case RoutineTemplate.office:
-        return 'Office routine';
-      case RoutineTemplate.none:
-        return 'Custom';
-    }
-  }
-
-  String get description {
-    switch (this) {
-      case RoutineTemplate.school:
-        return 'For school students';
-      case RoutineTemplate.college:
-        return 'For college students';
-      case RoutineTemplate.office:
-        return 'For working professionals';
-      case RoutineTemplate.none:
-        return 'Create custom routine';
-    }
-  }
-}
-
 /// Days of the week enum
 enum DayOfWeek {
   monday,

@@ -59,9 +59,13 @@ class RoutineRepository {
     });
   }
 
-  Future<void> toggleRoutineCompletion(String routineId, bool isCompleted) async {
-    await _client.from('routine').update({
-      'is_completed': isCompleted,
-    }).eq('id', routineId);
+  Future<void> toggleRoutineCompletion(
+    String routineId,
+    bool isCompleted,
+  ) async {
+    await _client
+        .from('routine')
+        .update({'is_completed': isCompleted})
+        .eq('id', routineId);
   }
 }

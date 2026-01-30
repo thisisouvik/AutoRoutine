@@ -8,7 +8,9 @@ class AddRoutineFormData {
   final Set<DayOfWeek> selectedDays;
   final int customFrequencyDaysPerWeek;
   final TaskType taskType;
-  final RoutineTemplate selectedTemplate;
+
+  /// User-defined template ID (null means no template selected)
+  final String? selectedTemplateId;
 
   AddRoutineFormData({
     required this.taskName,
@@ -17,7 +19,7 @@ class AddRoutineFormData {
     this.selectedDays = const {},
     this.customFrequencyDaysPerWeek = 1,
     required this.taskType,
-    this.selectedTemplate = RoutineTemplate.none,
+    this.selectedTemplateId,
   });
 
   /// Validates if the form data is complete and valid
@@ -59,12 +61,8 @@ class AddRoutineFormData {
     }
 
     // Check template selection if task type is template
-    if (taskType == TaskType.template &&
-        selectedTemplate == RoutineTemplate.none) {
-      return ValidateResult(
-        isValid: false,
-        error: 'Please select a template',
-      );
+    if (taskType == TaskType.template && selectedTemplateId == null) {
+      return ValidateResult(isValid: false, error: 'Please select a template');
     }
 
     return ValidateResult(isValid: true);
@@ -77,7 +75,8 @@ class AddRoutineFormData {
     Set<DayOfWeek>? selectedDays,
     int? customFrequencyDaysPerWeek,
     TaskType? taskType,
-    RoutineTemplate? selectedTemplate,
+    String? selectedTemplateId,
+    bool clearTemplateId = false,
   }) {
     return AddRoutineFormData(
       taskName: taskName ?? this.taskName,
@@ -87,7 +86,9 @@ class AddRoutineFormData {
       customFrequencyDaysPerWeek:
           customFrequencyDaysPerWeek ?? this.customFrequencyDaysPerWeek,
       taskType: taskType ?? this.taskType,
-      selectedTemplate: selectedTemplate ?? this.selectedTemplate,
+      selectedTemplateId: clearTemplateId
+          ? null
+          : (selectedTemplateId ?? this.selectedTemplateId),
     );
   }
 }

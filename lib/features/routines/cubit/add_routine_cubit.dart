@@ -92,12 +92,15 @@ class AddRoutineCubit extends Cubit<AddRoutineState> {
     );
   }
 
-  /// Update selected template
-  void updateTemplate(RoutineTemplate template) {
+  /// Update selected template (by ID from user-created templates)
+  void updateTemplateId(String? templateId) {
     final currentState = state as AddRoutineInitial;
     emit(
       currentState.copyWith(
-        formData: currentState.formData.copyWith(selectedTemplate: template),
+        formData: currentState.formData.copyWith(
+          selectedTemplateId: templateId,
+          clearTemplateId: templateId == null,
+        ),
       ),
     );
   }
