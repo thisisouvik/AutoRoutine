@@ -38,7 +38,11 @@ class _AIRoutineGeneratorScreenState extends State<AIRoutineGeneratorScreen> {
 
     if (prompt.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please describe your daily schedule')),
+        const SnackBar(
+          content: Text('Please describe your daily schedule'),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
       );
       return;
     }
@@ -107,14 +111,22 @@ Make sure times are in 24-hour format. If no specific time is mentioned, suggest
 
         setState(() => _generatedRoutines = routines);
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Parse error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Parse error: $e'),
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+          ),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -135,14 +147,22 @@ Make sure times are in 24-hour format. If no specific time is mentioned, suggest
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Added ${selectedIndices.length} routines!')),
+        SnackBar(
+          content: Text('Added ${selectedIndices.length} routines!'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
       );
 
       Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error adding routines: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding routines: $e'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
+      );
     }
   }
 

@@ -87,6 +87,12 @@ class ProfileScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Edit profile coming soon!'),
+                        behavior: SnackBarBehavior.floating,
+                        margin: EdgeInsets.only(
+                          bottom: 80,
+                          left: 16,
+                          right: 16,
+                        ),
                       ),
                     );
                   },
@@ -104,6 +110,12 @@ class ProfileScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Notification settings coming soon!'),
+                        behavior: SnackBarBehavior.floating,
+                        margin: EdgeInsets.only(
+                          bottom: 80,
+                          left: 16,
+                          right: 16,
+                        ),
                       ),
                     );
                   },
@@ -336,6 +348,12 @@ class _WeeklyProgressCard extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Detailed report coming soon!'),
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(
+                              bottom: 80,
+                              left: 16,
+                              right: 16,
+                            ),
                           ),
                         );
                       },

@@ -81,6 +81,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           ),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -99,6 +100,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           content: Text('Save failed: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
         ),
       );
     }
@@ -151,9 +153,17 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
               BlocListener<AddRoutineCubit, AddRoutineState>(
                 listener: (context, state) {
                   if (state is AddRoutineError) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(state.message)));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.only(
+                          bottom: 80,
+                          left: 16,
+                          right: 16,
+                        ),
+                      ),
+                    );
                   } else if (state is AddRoutineValid) {
                     _saveRoutine(context, state.formData);
                   }
