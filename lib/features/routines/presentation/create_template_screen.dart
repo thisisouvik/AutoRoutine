@@ -60,6 +60,7 @@ class _CreateTemplateScreenState extends State<CreateTemplateScreen> {
       description: _descriptionController.text.trim().isEmpty
           ? null
           : _descriptionController.text.trim(),
+      scheduleType: name, // Use template name as schedule type
       routines: selectedRoutines,
     );
 
@@ -96,9 +97,10 @@ class _CreateTemplateScreenState extends State<CreateTemplateScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: _descriptionController,
+                  maxLines: 3,
                   decoration: const InputDecoration(
                     labelText: 'Description (optional)',
-                    hintText: 'e.g., My weekday morning routine',
+                    hintText: 'e.g., My weekday morning routine for the hostel',
                     border: OutlineInputBorder(),
                   ),
                 ),

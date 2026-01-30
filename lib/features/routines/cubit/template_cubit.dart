@@ -19,9 +19,21 @@ class TemplateCubit extends Cubit<TemplateState> {
     }
   }
 
+  Future<void> loadTemplatesByType(String scheduleType) async {
+    emit(TemplateLoading());
+
+    try {
+      final templates = await repository.fetchTemplatesByType(scheduleType);
+      emit(TemplateLoaded(templates));
+    } catch (e) {
+      emit(TemplateError(e.toString()));
+    }
+  }
+
   Future<void> createTemplate({
     required String name,
     String? description,
+    String scheduleType = 'General',
     required List<TemplateRoutine> routines,
   }) async {
     emit(TemplateCreating());
@@ -30,6 +42,7 @@ class TemplateCubit extends Cubit<TemplateState> {
       final templateId = await repository.createTemplate(
         name: name,
         description: description,
+        scheduleType: scheduleType,
         routines: routines,
       );
       emit(TemplateCreated(templateId));
@@ -49,11 +62,14 @@ class TemplateCubit extends Cubit<TemplateState> {
     }
   }
 
-  Future<void> applyTemplate(String templateId) async {
+  Future<void> applyTemplate(
+    String templateId, {
+    String scheduleType = 'General',
+  }) async {
     emit(TemplateApplying());
 
     try {
-      await repository.applyTemplate(templateId);
+      await repository.applyTemplate(templateId, scheduleType: scheduleType);
       emit(TemplateApplied());
       // Brief delay then reload
       await Future.delayed(const Duration(milliseconds: 500));

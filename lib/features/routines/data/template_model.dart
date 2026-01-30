@@ -35,6 +35,7 @@ class RoutineTemplate {
   final String userId;
   final String name;
   final String? description;
+  final String scheduleType;
   final List<TemplateRoutine> routines;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -44,6 +45,7 @@ class RoutineTemplate {
     required this.userId,
     required this.name,
     this.description,
+    this.scheduleType = 'General',
     required this.routines,
     required this.createdAt,
     this.updatedAt,
@@ -55,6 +57,7 @@ class RoutineTemplate {
       userId: map['user_id'] as String,
       name: map['name'] as String,
       description: map['description'] as String?,
+      scheduleType: map['schedule_type'] as String? ?? 'General',
       routines: [], // Will be populated separately
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: map['updated_at'] != null
@@ -64,6 +67,10 @@ class RoutineTemplate {
   }
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'description': description};
+    return {
+      'name': name,
+      'description': description,
+      'schedule_type': scheduleType,
+    };
   }
 }

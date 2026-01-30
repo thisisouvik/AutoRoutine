@@ -52,7 +52,10 @@ class RoutineCubit extends Cubit<RoutineState> {
     }
   }
 
-  Future<void> toggleRoutineCompletion(String routineId, bool isCompleted) async {
+  Future<void> toggleRoutineCompletion(
+    String routineId,
+    bool isCompleted,
+  ) async {
     try {
       await repository.toggleRoutineCompletion(routineId, isCompleted);
       await loadRoutines();

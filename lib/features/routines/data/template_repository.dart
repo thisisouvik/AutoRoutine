@@ -36,9 +36,45 @@ class TemplateRepository {
     return result;
   }
 
+  Future<List<RoutineTemplate>> fetchTemplatesByType(
+    String scheduleType,
+  ) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw Exception('User not authenticated');
+
+    final templates = await _client
+        .from('routine_template')
+        .select()
+        .eq('user_id', userId)
+        .eq('schedule_type', scheduleType)
+        .order('created_at', ascending: false);
+
+    List<RoutineTemplate> result = [];
+    for (var template in templates) {
+      final t = RoutineTemplate.fromMap(template);
+
+      // Fetch routines for this template
+      final routines = await _client
+          .from('template_routine')
+          .select()
+          .eq('template_id', t.id);
+
+      t.routines.addAll(
+        (routines as List)
+            .map((e) => TemplateRoutine.fromMap(e as Map<String, dynamic>))
+            .toList(),
+      );
+
+      result.add(t);
+    }
+
+    return result;
+  }
+
   Future<String> createTemplate({
     required String name,
     String? description,
+    String scheduleType = 'General',
     required List<TemplateRoutine> routines,
   }) async {
     final userId = _client.auth.currentUser?.id;
@@ -49,6 +85,7 @@ class TemplateRepository {
       'user_id': userId,
       'name': name,
       'description': description,
+      'schedule_type': scheduleType,
     }).select();
 
     final templateId = templateResponse[0]['id'] as String;
@@ -71,7 +108,10 @@ class TemplateRepository {
     await _client.from('routine_template').delete().eq('id', templateId);
   }
 
-  Future<void> applyTemplate(String templateId) async {
+  Future<void> applyTemplate(
+    String templateId, {
+    String scheduleType = 'General',
+  }) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) throw Exception('User not authenticated');
 
@@ -89,6 +129,7 @@ class TemplateRepository {
         'min': routine['min'],
         'message': routine['message'],
         'is_active': routine['is_active'] ?? true,
+        'schedule_type': scheduleType,
       });
     }
   }
