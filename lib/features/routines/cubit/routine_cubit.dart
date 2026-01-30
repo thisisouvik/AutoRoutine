@@ -18,13 +18,43 @@ class RoutineCubit extends Cubit<RoutineState> {
     }
   }
 
+  Future<void> loadRoutinesByType(String scheduleType) async {
+    emit(RoutineLoading());
+
+    try {
+      final routines = await repository.fetchRoutinesByType(scheduleType);
+      emit(RoutineLoaded(routines.toList()));
+    } catch (e) {
+      emit(RoutineError(e.toString()));
+    }
+  }
+
   Future<void> addRoutine({
     required int hour,
     required int minute,
     required String message,
+    String scheduleType = 'General',
+    String scheduleFrequency = 'Every day',
+    String? templateName,
   }) async {
     try {
-      await repository.addRoutine(hour: hour, minute: minute, message: message);
+      await repository.addRoutine(
+        hour: hour,
+        minute: minute,
+        message: message,
+        scheduleType: scheduleType,
+        scheduleFrequency: scheduleFrequency,
+        templateName: templateName,
+      );
+      await loadRoutines();
+    } catch (e) {
+      emit(RoutineError(e.toString()));
+    }
+  }
+
+  Future<void> toggleRoutineCompletion(String routineId, bool isCompleted) async {
+    try {
+      await repository.toggleRoutineCompletion(routineId, isCompleted);
       await loadRoutines();
     } catch (e) {
       emit(RoutineError(e.toString()));
