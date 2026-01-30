@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TemplateCubit extends Cubit<TemplateState> {
   final TemplateRepository repository;
+  final Map<String, bool> _celebrityTemplateActivation = {};
 
   TemplateCubit(this.repository) : super(TemplateInitial());
 
@@ -16,8 +17,14 @@ class TemplateCubit extends Cubit<TemplateState> {
       final userTemplates = await repository.fetchTemplates();
       final celebrityTemplates = CelebrityRoutines.getPredefinedTemplates();
 
+      // Apply stored activation status to celebrity templates
+      final updatedCelebrityTemplates = celebrityTemplates.map((template) {
+        final isActive = _celebrityTemplateActivation[template.id] ?? false;
+        return template.copyWith(isActive: isActive);
+      }).toList();
+
       // Combine both lists - celebrities first, then user templates
-      final allTemplates = [...celebrityTemplates, ...userTemplates];
+      final allTemplates = [...updatedCelebrityTemplates, ...userTemplates];
 
       emit(TemplateLoaded(allTemplates));
     } catch (e) {
@@ -73,8 +80,16 @@ class TemplateCubit extends Cubit<TemplateState> {
     bool isActive,
   ) async {
     try {
-      await repository.toggleTemplateActivation(templateId, isActive);
-      await loadTemplates();
+      // Check if this is a celebrity template (starts with 'celebrity_')
+      if (templateId.startsWith('celebrity_')) {
+        // Store activation status locally for celebrity templates
+        _celebrityTemplateActivation[templateId] = isActive;
+        await loadTemplates();
+      } else {
+        // For user templates, update in database
+        await repository.toggleTemplateActivation(templateId, isActive);
+        await loadTemplates();
+      }
     } catch (e) {
       emit(TemplateError(e.toString()));
     }
