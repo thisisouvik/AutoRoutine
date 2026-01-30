@@ -108,4 +108,8 @@ class RoutineRepository {
         .update({'is_completed': isCompleted})
         .eq('id', routineId);
   }
+
+  Future<void> deleteRoutine(String routineId) async {
+    await _client.from('routine').delete().eq('id', routineId);
+  }
 }

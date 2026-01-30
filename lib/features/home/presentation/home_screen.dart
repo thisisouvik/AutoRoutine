@@ -179,6 +179,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             !routine.isCompleted,
                           );
                         },
+                        onDismiss: () {
+                          context.read<RoutineCubit>().deleteRoutine(
+                            routine.id,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${routine.message} dismissed'),
+                              duration: const Duration(seconds: 2),
+                              margin: const EdgeInsets.only(bottom: 80),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                       );
                     },
                   );
@@ -215,8 +228,13 @@ class _HomeScreenState extends State<HomeScreen> {
 class _RoutineCard extends StatelessWidget {
   final Routine routine;
   final VoidCallback onComplete;
+  final VoidCallback onDismiss;
 
-  const _RoutineCard({required this.routine, required this.onComplete});
+  const _RoutineCard({
+    required this.routine,
+    required this.onComplete,
+    required this.onDismiss,
+  });
 
   String _formatTime(int hour, int minute) {
     final period = hour >= 12 ? 'PM' : 'AM';
@@ -237,123 +255,150 @@ class _RoutineCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Template name (if part of a template)
-            if (routine.templateName != null &&
-                routine.templateName!.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  routine.templateName!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue.shade700,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            if (routine.templateName != null &&
-                routine.templateName!.isNotEmpty)
-              const SizedBox(height: 8),
-
-            // Task name (bold)
-            Text(
-              routine.message,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                decoration: routine.isCompleted
-                    ? TextDecoration.lineThrough
-                    : null,
-                color: routine.isCompleted ? Colors.grey : Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Schedule frequency and time row
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Frequency (semi-bold)
-                Expanded(
-                  child: Text(
-                    routine.scheduleFrequency,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade700,
+                // Template name (if part of a template)
+                if (routine.templateName != null &&
+                    routine.templateName!.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      routine.templateName!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
-                // Time (right side)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: Colors.orange.shade700,
+                if (routine.templateName != null &&
+                    routine.templateName!.isNotEmpty)
+                  const SizedBox(height: 8),
+
+                // Task name (bold) with dismiss button
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        routine.message,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          decoration: routine.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
+                          color: routine.isCompleted
+                              ? Colors.grey
+                              : Colors.black87,
+                        ),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _formatTime(routine.hour, routine.minute),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      iconSize: 20,
+                      color: Colors.grey.shade600,
+                      padding: const EdgeInsets.all(0),
+                      constraints: const BoxConstraints(),
+                      onPressed: onDismiss,
+                      tooltip: 'Dismiss task',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                // Schedule frequency and time row
+                Row(
+                  children: [
+                    // Frequency (semi-bold)
+                    Expanded(
+                      child: Text(
+                        routine.scheduleFrequency,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.orange.shade700,
+                          color: Colors.grey.shade700,
                         ),
                       ),
-                    ],
+                    ),
+                    // Time (right side)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: Colors.orange.shade700,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _formatTime(routine.hour, routine.minute),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.orange.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Completion button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: onComplete,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: routine.isCompleted
+                          ? Colors.grey.shade300
+                          : Colors.green,
+                      foregroundColor: routine.isCompleted
+                          ? Colors.grey.shade700
+                          : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: Icon(
+                      routine.isCompleted
+                          ? Icons.undo
+                          : Icons.check_circle_outline,
+                    ),
+                    label: Text(
+                      routine.isCompleted
+                          ? 'Mark as Incomplete'
+                          : 'Mark as Complete',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 12),
-
-            // Completion button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: onComplete,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: routine.isCompleted
-                      ? Colors.grey.shade300
-                      : Colors.green,
-                  foregroundColor: routine.isCompleted
-                      ? Colors.grey.shade700
-                      : Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: Icon(
-                  routine.isCompleted ? Icons.undo : Icons.check_circle_outline,
-                ),
-                label: Text(
-                  routine.isCompleted
-                      ? 'Mark as Incomplete'
-                      : 'Mark as Complete',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
             ),
           ],
         ),

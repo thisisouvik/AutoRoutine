@@ -65,4 +65,13 @@ class RoutineCubit extends Cubit<RoutineState> {
       emit(RoutineError(e.toString()));
     }
   }
+
+  Future<void> deleteRoutine(String routineId) async {
+    try {
+      await repository.deleteRoutine(routineId);
+      await loadRoutines();
+    } catch (e) {
+      emit(RoutineError(e.toString()));
+    }
+  }
 }
