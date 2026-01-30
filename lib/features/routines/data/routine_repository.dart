@@ -1,5 +1,4 @@
 import 'package:autoroutine/features/routines/data/routine_model.dart';
-import 'package:autoroutine/features/routines/data/template_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoutineRepository {
