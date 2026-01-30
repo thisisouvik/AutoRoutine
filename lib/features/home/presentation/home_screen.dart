@@ -1,31 +1,21 @@
-import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/routines/cubit/routine_cubit.dart';
 import 'package:autoroutine/features/routines/cubit/routine_state.dart';
 import 'package:autoroutine/features/routines/data/routine_model.dart';
-import 'package:autoroutine/features/routines/presentation/add_routine_screen.dart';
-import 'package:autoroutine/features/routines/presentation/ai_routine_generator_screen.dart';
-import 'package:autoroutine/features/routines/presentation/suggest_routine_screen.dart';
-import 'package:autoroutine/features/routines/presentation/template_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool showAppBar;
+  
+  const HomeScreen({super.key, this.showAppBar = true});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedScheduleType = 'All';
-  final List<String> _scheduleTypes = [
-    'All',
-    'General',
-    'Home',
-    'College',
-    'Office',
-    'Gym',
-  ];
+  String _searchQuery = '';
+  List<Routine> _allRoutines = [];
 
   @override
   void initState() {
@@ -34,101 +24,57 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<RoutineCubit>().loadRoutines();
   }
 
-  void _onScheduleTypeChanged(String? newType) {
-    if (newType != null) {
-      setState(() {
-        _selectedScheduleType = newType;
-      });
-      // Load all routines or filter by specific type
-      if (newType == 'All') {
-        context.read<RoutineCubit>().loadRoutines();
-      } else {
-        context.read<RoutineCubit>().loadRoutinesByType(newType);
-      }
-    }
+  List<Routine> get _filteredRoutines {
+    if (_searchQuery.isEmpty) return _allRoutines;
+    final query = _searchQuery.toLowerCase();
+    return _allRoutines.where((routine) {
+      return routine.message.toLowerCase().contains(query) ||
+          routine.scheduleFrequency.toLowerCase().contains(query) ||
+          (routine.templateName?.toLowerCase().contains(query) ?? false);
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AutoRoutine'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.auto_awesome),
-            tooltip: 'AI Generator',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AIRoutineGeneratorScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.schedule),
-            tooltip: 'Templates',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const TemplateListScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.lightbulb_outline),
-            tooltip: 'Suggestions',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SuggestRoutineScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthCubit>().logout();
-            },
-          ),
-        ],
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text('My Routines'),
+              elevation: 0,
+            )
+          : null,
       body: Column(
         children: [
-          // Schedule Type Filter
+          // Search Bar
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                const Text(
-                  'Schedule Type:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search routines...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedScheduleType.isEmpty
-                        ? null
-                        : _selectedScheduleType,
-                    items: _scheduleTypes.map((type) {
-                      return DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    onChanged: _onScheduleTypeChanged,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
+              ),
             ),
           ),
           Expanded(
@@ -139,7 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 if (state is RoutineLoaded) {
-                  if (state.routines.isEmpty) {
+                  // Update the cached routines list
+                  _allRoutines = state.routines;
+                  final routines = _filteredRoutines;
+
+                  if (routines.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -151,9 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            _selectedScheduleType == 'All'
-                                ? 'No routines yet'
-                                : 'No routines for $_selectedScheduleType',
+                            _searchQuery.isNotEmpty
+                                ? 'No routines found for "$_searchQuery"'
+                                : 'No routines yet',
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
@@ -174,9 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       horizontal: 16,
                       vertical: 8,
                     ),
-                    itemCount: state.routines.length,
+                    itemCount: routines.length,
                     itemBuilder: (context, index) {
-                      final routine = state.routines[index];
+                      final routine = routines[index];
                       return _RoutineCard(
                         routine: routine,
                         onComplete: () {
@@ -212,15 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddRoutineScreen()),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

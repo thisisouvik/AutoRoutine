@@ -1,7 +1,7 @@
 import 'package:autoroutine/features/auth/cubit/auth_cubit.dart';
 import 'package:autoroutine/features/auth/cubit/auth_state.dart';
 import 'package:autoroutine/features/auth/presentation/login_screen.dart';
-import 'package:autoroutine/features/home/presentation/home_screen.dart';
+import 'package:autoroutine/features/home/presentation/main_navigation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +18,7 @@ class AuthGate extends StatelessWidget {
           );
         }
         if (state is AuthAuthenticated) {
-          return const HomeScreen();
+          return const MainNavigationScreen();
         }
         return const LoginScreen();
       },
