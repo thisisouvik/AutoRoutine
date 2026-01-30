@@ -195,6 +195,22 @@ class _AIRoutineGeneratorScreenState extends State<AIRoutineGeneratorScreen> {
     );
   }
 
+  String _formatScheduleFrequency() {
+    if (_scheduleFrequency == ScheduleFrequency.specific_days &&
+        _selectedDays.isNotEmpty) {
+      final days = _selectedDays.map((d) => d.shortName).join(', ');
+      return 'Specific days ($days)';
+    }
+
+    if (_scheduleFrequency == ScheduleFrequency.custom_frequency &&
+        _selectedDays.isNotEmpty) {
+      final days = _selectedDays.map((d) => d.shortName).join(', ');
+      return 'Custom frequency ($days)';
+    }
+
+    return _scheduleFrequency.displayName;
+  }
+
   Widget _buildReviewRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -217,7 +233,7 @@ class _AIRoutineGeneratorScreenState extends State<AIRoutineGeneratorScreen> {
         minute: _selectedTime.minute,
         message: _taskName,
         scheduleType: 'General',
-        scheduleFrequency: _scheduleFrequency.displayName,
+        scheduleFrequency: _formatScheduleFrequency(),
       );
 
       dev.log('AI routine saved successfully', name: 'AIRoutineGenerator');
@@ -354,6 +370,7 @@ class _AIRoutineGeneratorScreenState extends State<AIRoutineGeneratorScreen> {
           ),
           const SizedBox(width: 8),
           FloatingActionButton(
+            heroTag: 'ai_send_fab',
             mini: true,
             onPressed: _handleNextStep,
             child: const Icon(Icons.send),

@@ -1,5 +1,6 @@
 import 'package:autoroutine/features/routines/cubit/routine_state.dart';
 import 'package:autoroutine/features/routines/data/routine_repository.dart';
+import 'package:autoroutine/core/utils/notification_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RoutineCubit extends Cubit<RoutineState> {
@@ -13,6 +14,7 @@ class RoutineCubit extends Cubit<RoutineState> {
     try {
       final routines = await repository.fetchRoutine();
       emit(RoutineLoaded(routines.toList()));
+      await NotificationService.syncRoutineNotifications(routines.toList());
     } catch (e) {
       emit(RoutineError(e.toString()));
     }
@@ -60,6 +62,9 @@ class RoutineCubit extends Cubit<RoutineState> {
   ) async {
     try {
       await repository.toggleRoutineCompletion(routineId, isCompleted);
+      if (isCompleted) {
+        await NotificationService.cancelAllForRoutine(routineId);
+      }
       await loadRoutines();
     } catch (e) {
       emit(RoutineError(e.toString()));
@@ -69,6 +74,7 @@ class RoutineCubit extends Cubit<RoutineState> {
   Future<void> deleteRoutine(String routineId) async {
     try {
       await repository.deleteRoutine(routineId);
+      await NotificationService.cancelAllForRoutine(routineId);
       await loadRoutines();
     } catch (e) {
       emit(RoutineError(e.toString()));

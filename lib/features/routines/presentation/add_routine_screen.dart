@@ -52,6 +52,22 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     }
   }
 
+  String _formatScheduleFrequency(AddRoutineFormData formData) {
+    if (formData.scheduleFrequency == ScheduleFrequency.specific_days &&
+        formData.selectedDays.isNotEmpty) {
+      final days = formData.selectedDays.map((d) => d.shortName).join(', ');
+      return 'Specific days ($days)';
+    }
+
+    if (formData.scheduleFrequency == ScheduleFrequency.custom_frequency &&
+        formData.selectedDays.isNotEmpty) {
+      final days = formData.selectedDays.map((d) => d.shortName).join(', ');
+      return 'Custom frequency ($days)';
+    }
+
+    return formData.scheduleFrequency.displayName;
+  }
+
   Future<void> _saveRoutine(
     BuildContext context,
     AddRoutineFormData formData,
@@ -63,7 +79,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         minute: formData.selectedTime.minute,
         message: formData.taskName,
         scheduleType: formData.selectedTemplateId ?? 'General',
-        scheduleFrequency: formData.scheduleFrequency.displayName,
+        scheduleFrequency: _formatScheduleFrequency(formData),
         templateName: formData.selectedTemplateId,
       );
 

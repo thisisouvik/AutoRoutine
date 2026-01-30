@@ -8,6 +8,7 @@ import 'package:autoroutine/features/routines/cubit/template_cubit.dart';
 import 'package:autoroutine/features/routines/data/activity_repository.dart';
 import 'package:autoroutine/features/routines/data/routine_repository.dart';
 import 'package:autoroutine/features/routines/data/template_repository.dart';
+import 'package:autoroutine/core/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -35,6 +36,7 @@ Future<void> main() async {
   }
 
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await NotificationService.initialize();
   runApp(const MyApp());
 }
 
