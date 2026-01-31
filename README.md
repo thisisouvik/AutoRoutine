@@ -1,5 +1,9 @@
 # AutoRoutine
 
+<div align="center">
+  <img src="https://res.cloudinary.com/dmrco4rig/image/upload/v1769841007/autoroutine_logo_c3lj3y.png" alt="AutoRoutine Logo" width="150" height="150" />
+</div>
+</br>
 A comprehensive Flutter application for managing daily routines with AI-powered scheduling, smart notifications, celebrity wellness templates, and activity tracking. Built with flutter_bloc for state management, Supabase for backend, and Google Gemini AI for conversational routine creation.
 
 ## 🎯 Overview
@@ -13,6 +17,35 @@ AutoRoutine helps users build and maintain consistent daily habits through:
 - **Bottom Navigation**: Seamless access to Home, AI Generator, Templates, and Profile
 
 ## 🛠 Tech Stack
+
+### Frontend
+| Technology | Version | Purpose |
+|------------|---------|----------|
+| ![Flutter](https://img.shields.io/badge/Flutter-3.10.1-blue?style=for-the-badge&logo=flutter) | ^3.10.1 | Cross-platform mobile framework |
+| ![Dart](https://img.shields.io/badge/Dart-3.x-blue?style=for-the-badge&logo=dart) | ^3.10.1 | Programming language |
+| ![BLoC](https://img.shields.io/badge/flutter_bloc-8.x-purple?style=for-the-badge) | Latest | State management (Cubit pattern) |
+| ![Material Design](https://img.shields.io/badge/Material_Design_3-Latest-teal?style=for-the-badge) | Latest | UI design system |
+
+### Backend & Services
+| Technology | Version | Purpose |
+|------------|---------|----------|
+| ![Supabase](https://img.shields.io/badge/Supabase-Latest-green?style=for-the-badge&logo=supabase) | Latest | Backend-as-a-Service (Auth, PostgreSQL, RLS) |
+| ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue?style=for-the-badge&logo=postgresql) | Latest | Relational database |
+| ![Google Gemini](https://img.shields.io/badge/Google_Gemini-Latest-yellow?style=for-the-badge&logo=google) | Latest | AI routine generation |
+
+### Notifications & Scheduling
+| Technology | Version | Purpose |
+|------------|---------|----------|
+| ![flutter_local_notifications](https://img.shields.io/badge/flutter_local_notifications-17.1.2-orange?style=for-the-badge) | ^17.1.2 | Native push notifications |
+| ![timezone](https://img.shields.io/badge/timezone-0.9.2-red?style=for-the-badge) | ^0.9.2 | Timezone management |
+| ![flutter_timezone](https://img.shields.io/badge/flutter_timezone-5.0.1-red?style=for-the-badge) | ^5.0.1 | Device timezone detection |
+
+### Additional Libraries
+| Technology | Version | Purpose |
+|------------|---------|----------|
+| ![equatable](https://img.shields.io/badge/equatable-2.0.7-gray?style=for-the-badge) | ^2.0.7 | Value equality |
+| ![intl](https://img.shields.io/badge/intl-0.19.0-gray?style=for-the-badge) | ^0.19.0 | Internationalization |
+| ![flutter_dotenv](https://img.shields.io/badge/flutter_dotenv-Latest-gray?style=for-the-badge) | Latest | Environment configuration |
 
 ### Frontend
 - **Flutter** (SDK ^3.10.1)
@@ -97,7 +130,20 @@ timezone, flutter_timezone
 - **FloatingActionButton**: Quick access to manual routine creation
 - **State preservation**: IndexedStack keeps tab state
 
-## 📁 Project Architecture
+##  App Screenshots
+
+<div align="center">
+  <img src="lib/assets/screens/notification_added.png" alt="Notification Screen" width="200" />
+  <img src="lib/assets/screens/home_screen.png" alt="Home Screen" width="200" />
+  <img src="lib/assets/screens/profile_screen.png" alt="Profile Screen" width="200" />
+  <img src="lib/assets/screens/ai_chat_add_routine_screen.png" alt="AI Chat Screen" width="200" />
+</div>
+<div align="center">
+ <img src="lib/assets/screens/schedule_template_screen.png" alt="Scheduled Template Screen" width="200" />
+  <img src="lib/assets/screens/schedule_template_additional_screen.png" alt="Scheduled Template Additonal" width="200" />
+</div>
+
+## �📁 Project Architecture
 
 ```
 lib/
